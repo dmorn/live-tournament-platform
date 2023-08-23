@@ -10,7 +10,7 @@ end
 
 defmodule LTP.Tournament.GameCreated do
   @derive Jason.Encoder
-  defstruct [:id, :display_name, :tournament_id]
+  defstruct [:id, :display_name, :tournament_id, :sorting, :comment]
 end
 
 defmodule LTP.Tournament.ScoreAdded do

@@ -30,14 +30,21 @@ defmodule LTP.Tournament do
   end
 
   def execute(state, command = %Tournament.CreateGame{}) do
-    if Map.has_key?(state.games, command.id) do
-      {:error, :game_already_registered}
-    else
-      %Tournament.GameCreated{
-        id: command.id,
-        display_name: command.display_name,
-        tournament_id: state.id
-      }
+    cond do
+      Map.has_key?(state.games, command.id) ->
+        {:error, :game_already_registered}
+
+      command.sorting not in [:asc, :desc] ->
+        {:error, :invalid_sorting}
+
+      true ->
+        %Tournament.GameCreated{
+          id: command.id,
+          display_name: command.display_name,
+          tournament_id: state.id,
+          sorting: command.sorting,
+          comment: command.comment
+        }
     end
   end
 
