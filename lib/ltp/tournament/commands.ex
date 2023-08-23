@@ -7,7 +7,7 @@ defmodule LTP.Tournament.CreatePlayer do
 end
 
 defmodule LTP.Tournament.CreateGame do
-  defstruct [:id, :display_name, :tournament_id, :sorting, :comment]
+  defstruct [:id, :display_name, :tournament_id, sorting: :asc, comment: <<>>]
 end
 
 defmodule LTP.Tournament.AddScore do

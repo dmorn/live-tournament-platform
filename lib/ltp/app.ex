@@ -1,10 +1,5 @@
 defmodule LTP.App do
-  use Commanded.Application,
-    otp_app: :ltp,
-    event_store: [
-      adapter: Commanded.EventStore.Adapters.EventStore,
-      event_store: LTP.EventStore
-    ]
+  use Commanded.Application, otp_app: :ltp
 
   router(LTP.Tournament.Router)
 end

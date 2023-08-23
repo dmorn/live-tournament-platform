@@ -11,6 +11,12 @@ config :ltp,
   namespace: LTP,
   event_stores: [LTP.EventStore]
 
+config :ltp, LTP.App,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: LTP.EventStore
+  ]
+
 # Configures the endpoint
 config :ltp, LTPWeb.Endpoint,
   url: [host: "localhost"],

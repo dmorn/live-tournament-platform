@@ -16,6 +16,7 @@ defmodule LTP.Application do
       {Finch, name: LTP.Finch},
       # Start the Endpoint (http/https)
       LTPWeb.Endpoint,
+      {Registry, keys: :unique, name: LTP.LeaderboardRegistry},
       LTP.App
     ]
 

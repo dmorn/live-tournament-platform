@@ -58,9 +58,6 @@ defmodule LTP.Tournament do
       player_scores == nil ->
         {:error, :player_not_found}
 
-      Map.has_key?(player_scores, command.game_id) ->
-        {:error, :score_already_registered}
-
       true ->
         %Tournament.ScoreAdded{
           score: command.score,

@@ -1,5 +1,11 @@
 import Config
 
+config :ltp, LTP.App,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.InMemory,
+    serializer: Commanded.Serialization.JsonSerializer
+  ]
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :ltp, LTPWeb.Endpoint,
@@ -8,8 +14,7 @@ config :ltp, LTPWeb.Endpoint,
   server: false
 
 # In test we don't send emails.
-config :ltp, LTP.Mailer,
-  adapter: Swoosh.Adapters.Test
+config :ltp, LTP.Mailer, adapter: Swoosh.Adapters.Test
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
