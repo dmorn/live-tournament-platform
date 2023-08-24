@@ -16,20 +16,12 @@ defmodule LTPWeb.Tournament.ShowLive do
        page_title: summary.display_name,
        leaderboards: summary.leaderboards,
        tournament_id: id,
-       is_admin: session["admin_id"] != nil
+       is_admin: session["admin_id"] != nil,
+       add_player: false
      )}
   end
 
-  def handle_params(_params, _uri, socket), do: {:noreply, socket}
-
-  def handle_info({:events, events}, socket) do
-    if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
-      leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
-      {:noreply, assign(socket, leaderboard: leaderboard)}
-    else
-      {:noreply, socket}
-    end
-  end
+  def handle_params(_params, _uri, socket), do: {:noreply, assign(socket, add_player: false)}
 
   def render(assigns) do
     ~H"""
@@ -38,7 +30,7 @@ defmodule LTPWeb.Tournament.ShowLive do
         <%= @page_title %>
 
         <:actions>
-          <.button :if={@is_admin} phx-click={JS.patch(~p"/tournament/#{@tournament_id}/add_player")}>
+          <.button :if={@is_admin} phx-click="add_player">
             <%= gettext("Add player") %>
           </.button>
         </:actions>
@@ -58,10 +50,10 @@ defmodule LTPWeb.Tournament.ShowLive do
     </div>
 
     <.modal
-      :if={@live_action == :add_player}
+      :if={@add_player}
       show
       id="modal_id"
-      on_cancel={JS.patch(~p"/tournament/#{@tournament_id}")}
+      on_cancel={JS.patch(~p"/tournament/#{@tournament_id}", replace: true)}
     >
       <.live_component
         module={LTPWeb.Tournament.AddPlayerComponent}
@@ -71,5 +63,18 @@ defmodule LTPWeb.Tournament.ShowLive do
       />
     </.modal>
     """
+  end
+
+  def handle_info({:events, events}, socket) do
+    if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
+      leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
+      {:noreply, assign(socket, leaderboard: leaderboard)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("add_player", _params, socket) do
+    {:noreply, assign(socket, add_player: true)}
   end
 end

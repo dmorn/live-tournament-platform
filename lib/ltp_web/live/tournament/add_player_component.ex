@@ -46,7 +46,7 @@ defmodule LTPWeb.Tournament.AddPlayerComponent do
            :info,
            gettext("Player %{number} has been registered.", number: id)
          )
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_patch(to: socket.assigns.patch, replace: true)}
 
       {:error, :player_already_registered} ->
         {:noreply,
@@ -55,7 +55,7 @@ defmodule LTPWeb.Tournament.AddPlayerComponent do
            :error,
            gettext("Player %{number} was already registered for this tournament.", number: id)
          )
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_patch(to: socket.assigns.patch, replace: true)}
     end
   end
 end

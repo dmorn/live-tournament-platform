@@ -19,7 +19,8 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
        leaderboard: leaderboard,
        tournament_id: tournament_id,
        game_id: game_id,
-       is_admin: session["admin_id"] != nil
+       is_admin: session["admin_id"] != nil,
+       add_score: false
      )}
   end
 
@@ -32,9 +33,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
         <:actions>
           <div :if={not @leaderboard.is_closed and @game_id != "general" and @is_admin} class="space-x-1">
             <.button
-              phx-click={
-                JS.patch(~p"/tournament/#{@tournament_id}/leaderboards/#{@game_id}/add_score")
-              }
+              phx-click="add_score"
             >
               <%= gettext("Add score") %>
             </.button>
@@ -66,10 +65,10 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
     </div>
 
     <.modal
-      :if={@live_action == :add_score}
+      :if={@add_score}
       show
       id="modal_id"
-      on_cancel={JS.patch(~p"/tournament/#{@tournament_id}/leaderboards/#{@game_id}")}
+      on_cancel={JS.patch(~p"/tournament/#{@tournament_id}/leaderboards/#{@game_id}", replace: true)}
     >
       <.live_component
         module={LTPWeb.Tournament.AddScoreComponent}
@@ -82,7 +81,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
     """
   end
 
-  def handle_params(_params, _uri, socket), do: {:noreply, socket}
+  def handle_params(_params, _uri, socket), do: {:noreply, assign(socket, add_score: false)}
 
   def handle_info({:events, events}, socket) do
     if Enum.any?(events, &(&1.data.__struct__ in [Tournament.ScoreAdded, Tournament.GameClosed])) do
@@ -99,5 +98,9 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
     case App.dispatch(command) do
       :ok -> {:noreply, socket}
     end
+  end
+
+  def handle_event("add_score", _params, socket) do
+    {:noreply, assign(socket, add_score: true)}
   end
 end

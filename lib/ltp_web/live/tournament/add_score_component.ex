@@ -47,7 +47,7 @@ defmodule LTPWeb.Tournament.AddScoreComponent do
            :info,
            gettext("Score for player %{number} has been registered.", number: player_id)
          )
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_patch(to: socket.assigns.patch, replace: true)}
 
       {:error, :player_not_found} ->
         form = to_form(params, errors: [player_id: {gettext("Player is not registered."), []}])

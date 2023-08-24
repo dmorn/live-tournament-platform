@@ -20,11 +20,9 @@ defmodule LTPWeb.Router do
     get "/login/:token", SessionController, :login
 
     live_session :default do
-      live "/", Tournament.ShowLive, :show
-      live "/tournament/:id", Tournament.ShowLive, :show
-      live "/tournament/:id/add_player", Tournament.ShowLive, :add_player
-      live "/tournament/:tournament_id/leaderboards/:game_id", Tournament.LeaderboardLive, :show
-      live "/tournament/:tournament_id/leaderboards/:game_id/add_score", Tournament.LeaderboardLive, :add_score
+      live "/", Tournament.ShowLive
+      live "/tournament/:id", Tournament.ShowLive
+      live "/tournament/:tournament_id/leaderboards/:game_id", Tournament.LeaderboardLive
     end
   end
 
