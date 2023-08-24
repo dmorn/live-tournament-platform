@@ -26,17 +26,13 @@ defmodule LTPWeb.Tournament.ShowLive do
 
   def render(assigns) do
     ~H"""
-    <.header>
-      <%= @page_title %>
-
-      <:actions>
-        <.button :if={@admin_id != nil} phx-click="add_player">
-          <%= gettext("Add player") %>
-        </.button>
-      </:actions>
-    </.header>
+    <.header />
 
     <.container>
+      <.button :if={@admin_id != nil} phx-click="add_player" class="mb-4 w-full justify-center">
+        <%= gettext("Add player") %>
+      </.button>
+
       <.flash_group flash={@flash} />
 
       <.grid>

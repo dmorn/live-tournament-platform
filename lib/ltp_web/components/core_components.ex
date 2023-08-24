@@ -15,6 +15,7 @@ defmodule LTPWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
+  use LTPWeb, :verified_routes
 
   alias Phoenix.LiveView.JS
   import LTPWeb.Gettext
@@ -125,7 +126,7 @@ defmodule LTPWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "rounded-lg p-3 ring-1 mb-8",
+        "rounded-lg p-3 ring-1 mb-6",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
         @kind == :error && "bg-rose-50 text-rose-900 ring-rose-500 fill-rose-900"
       ]}
@@ -421,26 +422,14 @@ defmodule LTPWeb.CoreComponents do
   end
 
   @doc """
-  Renders a header with title.
+  Renders a header with the logo.
   """
-  attr :class, :string, default: nil
-
-  slot :inner_block, required: true
-  slot :actions
-
   def header(assigns) do
     ~H"""
-    <header class="bg-gray-800">
-      <.container>
-        <div class="md:flex md:items-center md:justify-between">
-          <div class="min-w-0 flex-1">
-            <h2 class="text-2xl font-bold leading-7 text-white sm:truncate sm:text-3xl sm:tracking-tight"><%= render_slot(@inner_block) %></h2>
-          </div>
-          <div if={@actions != []} class="mt-4 flex md:ml-4 md:mt-0">
-            <%= render_slot(@actions) %>
-          </div>
-        </div>
-      </.container>
+    <header class="bg-gray-800 flex justify-center p-6">
+      <.link navigate={~p"/"}>
+        <img src={~p"/images/logo.png"} width="120" height="99" />
+      </.link>
     </header>
     """
   end

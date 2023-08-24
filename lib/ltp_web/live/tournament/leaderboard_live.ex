@@ -26,34 +26,32 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
 
   def render(assigns) do
     ~H"""
-    <.header>
-      <%= @page_title %>
-
-      <:actions>
-        <div :if={not @leaderboard.is_closed and @game_id != "general" and @admin_id != nil} class="space-x-1">
-          <.button
-            phx-click="add_score"
-          >
-            <%= gettext("Add score") %>
-          </.button>
-
-          <.button
-            :if={false # Disable the close  button for now. There is no reopen action yet}
-            data-confirm={gettext("Are you sure? You cannot undo this action!")}
-            phx-click="close_game"
-          >
-            <%= gettext("Close game") %>
-          </.button>
-        </div>
-      </:actions>
-    </.header>
+    <.header />
 
     <.container>
+      <div :if={not @leaderboard.is_closed and @game_id != "general" and @admin_id != nil} class="space-y-1 mb-6 flex flex-col">
+        <.button
+          phx-click="add_score"
+          class="justify-center"
+        >
+          <%= gettext("Add score") %>
+        </.button>
+
+        <.button
+          :if={false # Disable the close  button for now. There is no reopen action yet}
+          data-confirm={gettext("Are you sure? You cannot undo this action!")}
+          phx-click="close_game"
+          class="justify-center"
+        >
+          <%= gettext("Close game") %>
+        </.button>
+      </div>
+
       <.flash_group flash={@flash} />
 
       <%= if Enum.any?(@leaderboard.scores) do %>
         <ul>
-          <.card_with_list>
+          <.card_with_list title={@page_title}>
             <:item
               :for={{score, i} <- Enum.with_index(@leaderboard.scores)}
               class={if i < 3, do: "font-bold"}
