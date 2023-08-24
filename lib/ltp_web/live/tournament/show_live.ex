@@ -17,7 +17,8 @@ defmodule LTPWeb.Tournament.ShowLive do
        leaderboards: summary.leaderboards,
        tournament_id: id,
        admin_id: session["admin_id"],
-       add_player: false
+       add_player: false,
+       pid: pid
      )}
   end
 
