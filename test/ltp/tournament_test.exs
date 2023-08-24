@@ -55,7 +55,7 @@ defmodule LTP.TournamentTest do
 
     assert [
              %{rank: 1, player: %{id: ^id, nickname: ^nick}}
-           ] = Leaderboard.get(pid, :general).scores
+           ] = Leaderboard.get(pid, "general").scores
 
     # Now check the scores again when a new player gets in.
     other_id = 2
@@ -85,6 +85,6 @@ defmodule LTP.TournamentTest do
     assert [
              %{rank: 1, player: %{id: ^id, nickname: ^nick}},
              %{rank: 2, player: %{id: ^other_id, nickname: ^other_nick}}
-           ] = Leaderboard.get(pid, :general).scores
+           ] = Leaderboard.get(pid, "general").scores
   end
 end
