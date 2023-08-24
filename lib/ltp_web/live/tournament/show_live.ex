@@ -1,5 +1,6 @@
 defmodule LTPWeb.Tournament.ShowLive do
   use LTPWeb, :live_view
+  alias LTP.Tournament
   alias LTP.Leaderboard
 
   def mount(params, session, socket) do
