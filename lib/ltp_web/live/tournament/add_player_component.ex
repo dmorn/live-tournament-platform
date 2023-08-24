@@ -15,7 +15,7 @@ defmodule LTPWeb.Tournament.AddPlayerComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header><%= gettext("Add player") %></.header>
+      <h2 class="text-2xl font-bold leading-7 sm:truncate sm:text-3xl sm:tracking-tight"><%= gettext("Add player") %></h2>
       <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
         <.input field={@form[:id]} type="number" label={gettext("Player number")} />
         <.input field={@form[:nickname]} label={gettext("Name")} />

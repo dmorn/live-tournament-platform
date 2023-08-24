@@ -89,6 +89,18 @@ defmodule LTPWeb.CoreComponents do
     """
   end
 
+  slot :inner_block
+
+  def container(assigns) do
+    ~H"""
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mx-auto max-w-7xl">
+        <%= render_slot(@inner_block) %>
+      </div>
+    </main>
+    """
+  end
+
   @doc """
   Renders flash notices.
 
@@ -113,9 +125,9 @@ defmodule LTPWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
+        "rounded-lg p-3 ring-1 mb-8",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :error && "bg-rose-50 text-rose-900 ring-rose-500 fill-rose-900"
       ]}
       {@rest}
     >
@@ -225,8 +237,7 @@ defmodule LTPWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "inline-flex items-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500",
         @class
       ]}
       {@rest}
@@ -419,15 +430,17 @@ defmodule LTPWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="md:flex md:items-center md:justify-between">
-      <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-          <%= render_slot(@inner_block) %>
-        </h2>
-      </div>
-      <div class="mt-4 flex md:ml-4 md:mt-0">
-        <%= render_slot(@actions) %>
-      </div>
+    <header class="bg-gray-800">
+      <.container>
+        <div class="md:flex md:items-center md:justify-between">
+          <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-white sm:truncate sm:text-3xl sm:tracking-tight"><%= render_slot(@inner_block) %></h2>
+          </div>
+          <div if={@actions != []} class="mt-4 flex md:ml-4 md:mt-0">
+            <%= render_slot(@actions) %>
+          </div>
+        </div>
+      </.container>
     </header>
     """
   end
@@ -512,7 +525,7 @@ defmodule LTPWeb.CoreComponents do
 
   def grid(assigns) do
     ~H"""
-    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-2 xl:gap-x-8">
+    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2 xl:gap-x-8 xl:gap-y-8">
       <%= render_slot(@inner_block) %>
     </ul>
     """
@@ -534,9 +547,9 @@ defmodule LTPWeb.CoreComponents do
       </div>
       <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
         <%= for item <- @item do %>
-          <div class="flex justify-between gap-x-4 py-3">
-            <dt class="text-gray-700 font-medium"><%= item.label %></dt>
-            <dd class="text-gray-700"><%= render_slot(item, :inner_block) %></dd>
+          <div class={["flex justify-between gap-x-4 py-3 text-gray-700", item[:class]]}>
+            <dt><%= item.label %></dt>
+            <dd><%= render_slot(item, :inner_block) %></dd>
           </div>
         <% end %>
       </dl>

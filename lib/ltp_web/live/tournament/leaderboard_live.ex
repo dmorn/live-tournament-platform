@@ -26,34 +26,37 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
 
   def render(assigns) do
     ~H"""
-    <div class="space-y-6">
-      <.header>
-        <%= @page_title %>
+    <.header>
+      <%= @page_title %>
 
-        <:actions>
-          <div :if={not @leaderboard.is_closed and @game_id != "general" and @admin_id != nil} class="space-x-1">
-            <.button
-              phx-click="add_score"
-            >
-              <%= gettext("Add score") %>
-            </.button>
+      <:actions>
+        <div :if={not @leaderboard.is_closed and @game_id != "general" and @admin_id != nil} class="space-x-1">
+          <.button
+            phx-click="add_score"
+          >
+            <%= gettext("Add score") %>
+          </.button>
 
-            <.button
-              :if={false # Disable the close  button for now. There is no reopen action yet}
-              data-confirm={gettext("Are you sure? You cannot undo this action!")}
-              phx-click="close_game"
-            >
-              <%= gettext("Close game") %>
-            </.button>
-          </div>
-        </:actions>
-      </.header>
+          <.button
+            :if={false # Disable the close  button for now. There is no reopen action yet}
+            data-confirm={gettext("Are you sure? You cannot undo this action!")}
+            phx-click="close_game"
+          >
+            <%= gettext("Close game") %>
+          </.button>
+        </div>
+      </:actions>
+    </.header>
+
+    <.container>
+      <.flash_group flash={@flash} />
 
       <%= if Enum.any?(@leaderboard.scores) do %>
         <ul>
           <.card_with_list>
             <:item
-              :for={score <- @leaderboard.scores}
+              :for={{score, i} <- Enum.with_index(@leaderboard.scores)}
+              class={if i < 3, do: "font-bold"}
               label={"#{score.rank}. #{score.player.nickname} (#{score.player.id})"}
             >
               <%= score.score %>
@@ -63,7 +66,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
       <% else %>
         <.error><%= gettext("No score has been registered yet") %></.error>
       <% end %>
-    </div>
+    </.container>
 
     <.modal
       :if={@add_score}

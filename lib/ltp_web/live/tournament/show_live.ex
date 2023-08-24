@@ -25,16 +25,18 @@ defmodule LTPWeb.Tournament.ShowLive do
 
   def render(assigns) do
     ~H"""
-    <div class="space-y-6">
-      <.header>
-        <%= @page_title %>
+    <.header>
+      <%= @page_title %>
 
-        <:actions>
-          <.button :if={@admin_id != nil} phx-click="add_player">
-            <%= gettext("Add player") %>
-          </.button>
-        </:actions>
-      </.header>
+      <:actions>
+        <.button :if={@admin_id != nil} phx-click="add_player">
+          <%= gettext("Add player") %>
+        </.button>
+      </:actions>
+    </.header>
+
+    <.container>
+      <.flash_group flash={@flash} />
 
       <.grid>
         <.card_with_list
@@ -42,12 +44,12 @@ defmodule LTPWeb.Tournament.ShowLive do
           title={leaderboard.display_name}
           phx-click={JS.navigate(~p"/tournament/#{@tournament_id}/leaderboards/#{leaderboard.id}")}
         >
-          <:item :for={score <- leaderboard.scores} label={"#{score.rank}. #{score.player.nickname} (#{score.player.id})"}>
+          <:item :for={{score, i} <- Enum.with_index(leaderboard.scores)} class={if i == 0, do: "font-bold"} label={"#{score.rank}. #{score.player.nickname} (#{score.player.id})"}>
             <%= score.score %>
           </:item>
         </.card_with_list>
       </.grid>
-    </div>
+    </.container>
 
     <.modal
       :if={@add_player}
