@@ -68,8 +68,8 @@ defmodule LTPWeb.Tournament.ShowLive do
 
   def handle_info({:events, events}, socket) do
     if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
-      leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
-      {:noreply, assign(socket, leaderboard: leaderboard)}
+      summary = Leaderboard.summary(socket.assigns.pid)
+      {:noreply, assign(socket, leaderboards: summary.leaderboards)}
     else
       {:noreply, socket}
     end
