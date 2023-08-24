@@ -39,7 +39,7 @@ defmodule LTPWeb.Tournament.AddScoreComponent do
       tournament_id: socket.assigns.tournament_id
     }
 
-    case App.dispatch(command) do
+    case App.dispatch(command, metadata: %{admin_id: socket.assigns.admin_id}) do
       :ok ->
         {:noreply,
          socket

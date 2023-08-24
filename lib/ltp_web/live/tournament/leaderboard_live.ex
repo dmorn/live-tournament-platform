@@ -19,7 +19,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
        leaderboard: leaderboard,
        tournament_id: tournament_id,
        game_id: game_id,
-       is_admin: session["admin_id"] != nil,
+       admin_id: session["admin_id"],
        add_score: false
      )}
   end
@@ -31,7 +31,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
         <%= @page_title %>
 
         <:actions>
-          <div :if={not @leaderboard.is_closed and @game_id != "general" and @is_admin} class="space-x-1">
+          <div :if={not @leaderboard.is_closed and @game_id != "general" and @admin_id != nil} class="space-x-1">
             <.button
               phx-click="add_score"
             >
@@ -75,6 +75,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
         id="add-player-form"
         patch={~p"/tournament/#{@tournament_id}/leaderboards/#{@game_id}"}
         tournament_id={@tournament_id}
+        admin_id={@admin_id}
         game_id={@game_id}
       />
     </.modal>
@@ -95,7 +96,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
   def handle_event("close_game", _params, socket) do
     command = %Tournament.CloseGame{tournament_id: socket.assigns.tournament_id, id: socket.assigns.game_id}
 
-    case App.dispatch(command) do
+    case App.dispatch(command, metadata: %{admin_id: socket.assigns.admin_id}) do
       :ok -> {:noreply, socket}
     end
   end

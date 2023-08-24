@@ -16,7 +16,7 @@ defmodule LTPWeb.Tournament.ShowLive do
        page_title: summary.display_name,
        leaderboards: summary.leaderboards,
        tournament_id: id,
-       is_admin: session["admin_id"] != nil,
+       admin_id: session["admin_id"],
        add_player: false
      )}
   end
@@ -30,7 +30,7 @@ defmodule LTPWeb.Tournament.ShowLive do
         <%= @page_title %>
 
         <:actions>
-          <.button :if={@is_admin} phx-click="add_player">
+          <.button :if={@admin_id != nil} phx-click="add_player">
             <%= gettext("Add player") %>
           </.button>
         </:actions>
@@ -60,6 +60,7 @@ defmodule LTPWeb.Tournament.ShowLive do
         id="add-player-form"
         patch={~p"/tournament/#{@tournament_id}"}
         tournament_id={@tournament_id}
+        admin_id={@admin_id}
       />
     </.modal>
     """
