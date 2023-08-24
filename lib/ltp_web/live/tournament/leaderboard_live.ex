@@ -39,6 +39,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
             </.button>
 
             <.button
+              :if={false # Disable the close  button for now. There is no reopen action yet}
               data-confirm={gettext("Are you sure? You cannot undo this action!")}
               phx-click="close_game"
             >
