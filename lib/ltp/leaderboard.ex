@@ -170,8 +170,13 @@ defmodule LTP.Leaderboard do
         :asc -> left < right
       end
     end)
+    # The same score gets the same ranking
+    |> Enum.chunk_by(fn %{score: score} -> score end)
     |> Enum.with_index(1)
-    |> Enum.map(fn {score, index} -> Map.put(score, :rank, index) end)
+    |> Enum.flat_map(fn {same_scores, index} ->
+      same_scores
+      |> Enum.map(&Map.put(&1, :rank, index))
+    end)
   end
 
   defp make_leaderboard(id, name, index \\ 0, sorting \\ @general_order) do
