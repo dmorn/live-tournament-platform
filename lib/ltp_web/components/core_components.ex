@@ -535,6 +535,7 @@ defmodule LTPWeb.CoreComponents do
 
   slot :item, doc: "Item rows with label and value" do
     attr :label, :string, required: true, doc: "Label"
+    attr :class, :string
   end
 
   attr :rest, :global
