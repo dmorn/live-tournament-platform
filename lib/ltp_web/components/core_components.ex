@@ -415,21 +415,17 @@ defmodule LTPWeb.CoreComponents do
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
-  slot :subtitle
   slot :actions
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
-      <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
-        </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
-        </p>
+    <header class="md:flex md:items-center md:justify-between">
+      <div class="min-w-0 flex-1">
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"><%= render_slot(@inner_block) %></h2>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="mt-4 flex md:ml-4 md:mt-0">
+        <%= render_slot(@actions) %>
+      </div>
     </header>
     """
   end
@@ -534,6 +530,43 @@ defmodule LTPWeb.CoreComponents do
         </div>
       </dl>
     </div>
+    """
+  end
+
+  @doc """
+  Renders a grid.
+  """
+  slot :inner_block, required: true
+
+  def grid(assigns) do
+    ~H"""
+    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
+      <%= render_slot(@inner_block) %>
+    </ul>
+    """
+  end
+
+  attr :title, :string, required: true
+  slot :item, doc: "Item rows with label and value" do
+    attr :label, :string, required: true, doc: "Label"
+  end
+  attr :rest, :global
+
+  def card_with_list(assigns) do
+    ~H"""
+    <li class="overflow-hidden rounded-xl border border-gray-200" {@rest}>
+      <div class="border-b border-gray-900/5 bg-gray-50 p-6">
+        <div class="font-medium leading-6 text-gray-900"><%= @title %></div>
+      </div>
+      <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+        <%= for item <- @item do %>
+          <div class="flex justify-between gap-x-4 py-3">
+            <dt class="text-gray-500"><%= item.label %></dt>
+            <dd class="text-gray-700"><%= render_slot(item, :inner_block) %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </li>
     """
   end
 
