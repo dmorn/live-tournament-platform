@@ -518,7 +518,7 @@ defmodule LTPWeb.CoreComponents do
     """
   end
 
-  attr :title, :string, required: true
+  attr :title, :string
 
   slot :item, doc: "Item rows with label and value" do
     attr :label, :string, required: true, doc: "Label"
@@ -529,7 +529,7 @@ defmodule LTPWeb.CoreComponents do
   def card_with_list(assigns) do
     ~H"""
     <li class="overflow-hidden rounded-xl border border-gray-200" {@rest}>
-      <div class="border-b border-gray-900/5 bg-gray-50 p-6">
+      <div :if={assigns[:title]} class="border-b border-gray-900/5 bg-gray-50 p-6">
         <div class="font-medium leading-6 text-gray-900"><%= @title %></div>
       </div>
       <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
