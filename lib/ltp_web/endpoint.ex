@@ -8,7 +8,8 @@ defmodule LTPWeb.Endpoint do
     store: :cookie,
     key: "_ltp_key",
     signing_salt: "6n+QuCZR",
-    same_site: "Lax"
+    same_site: "Lax",
+    max_age: 7 * 24 * 60 * 60
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
