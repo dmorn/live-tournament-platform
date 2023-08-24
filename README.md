@@ -5,6 +5,22 @@
 Phoenix.Token.sign(LTPWeb.Endpoint, "auth", "philip")
 ```
 
+## Setup production db
+Enter the IEX session
+```
+fly ssh issue --agent
+fly ssh console --pty -C "/app/bin/ltp remote"
+```
+(https://fly.io/docs/elixir/the-basics/iex-into-running-app/)
+
+The issue the following
+```elixir
+config = LTP.EventStore.config()
+:ok = EventStore.Tasks.Create.exec(config, [])
+:ok = EventStore.Tasks.Init.exec(config, [])
+```
+
+## Phoenix
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
