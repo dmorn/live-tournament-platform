@@ -48,14 +48,24 @@ defmodule LTP.Tournament do
     end
   end
 
+  def execute(state, command = %Tournament.CloseGame{}) do
+    %Tournament.GameClosed{id: command.id, tournament_id: state.id}
+  end
+
   def execute(state, command = %Tournament.AddScore{}) do
-    player_scores = Map.get(state.players, command.player_id)
+    game = Map.get(state.games, command.game_id)
 
     cond do
-      not Map.has_key?(state.games, command.game_id) ->
+      not is_number(command.score) ->
+        {:error, :invalid_score}
+
+      is_nil(game) ->
         {:error, :game_not_found}
 
-      player_scores == nil ->
+      game.is_closed ->
+        {:error, :game_is_closed}
+
+      not Map.has_key?(state.players, command.player_id) ->
         {:error, :player_not_found}
 
       true ->
@@ -82,13 +92,16 @@ defmodule LTP.Tournament do
   end
 
   def apply(state, event = %Tournament.GameCreated{}) do
-    %Tournament{state | games: Map.put(state.games, event.id, event.display_name)}
+    game = %{display_name: event.display_name, is_closed: false}
+    %Tournament{state | games: Map.put(state.games, event.id, game)}
   end
 
-  def apply(state, event = %Tournament.ScoreAdded{}) do
-    %Tournament{
-      state
-      | players: put_in(state.players, [event.player_id, event.game_id], event.score)
-    }
+  def apply(state, event = %Tournament.GameClosed{}) do
+    game = %{Map.get(state.games, event.id) | is_closed: false}
+    %Tournament{state | games: Map.put(state.games, event.id, game)}
+  end
+
+  def apply(state, %Tournament.ScoreAdded{}) do
+    state
   end
 end

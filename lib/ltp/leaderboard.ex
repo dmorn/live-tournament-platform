@@ -25,6 +25,15 @@ defmodule LTP.Leaderboard do
     GenServer.call(pid, {:get, leaderboard_id})
   end
 
+  @doc """
+  Returns true if there is still a leaderboard open.
+  """
+  def is_open(pid) do
+    summary(pid).leaderboards
+    |> Enum.map(fn %{is_closed: x} -> not x end)
+    |> Enum.any?()
+  end
+
   @impl true
   def init(opts) do
     # Restore state
@@ -37,7 +46,7 @@ defmodule LTP.Leaderboard do
     Commanded.EventStore.subscribe(LTP.App, opts[:tournament_id])
 
     boards = %{
-      @general_id => make_scoreboard(@general_id, "General Scoreboard")
+      @general_id => make_leaderboard(@general_id, "General Leaderboard")
     }
 
     {:ok, %{boards: boards, display_name: nil, players: %{}}}
@@ -56,7 +65,7 @@ defmodule LTP.Leaderboard do
       |> Enum.sort(fn {_, %{index: left}}, {_, %{index: right}} -> left < right end)
       |> Enum.map(fn {id, board} ->
         scores = Enum.take(board.scores, 3)
-        %{scores: scores, display_name: board.display_name, id: id}
+        %{scores: scores, display_name: board.display_name, id: id, is_closed: board.is_closed}
       end)
 
     summary = %{
@@ -87,7 +96,7 @@ defmodule LTP.Leaderboard do
 
   defp handle_event(event = %Tournament.GameCreated{}, state) do
     board =
-      make_scoreboard(
+      make_leaderboard(
         event.id,
         event.display_name,
         map_size(state.boards),
@@ -95,6 +104,10 @@ defmodule LTP.Leaderboard do
       )
 
     put_in(state, [:boards, event.id], board)
+  end
+
+  defp handle_event(event = %Tournament.GameClosed{}, state) do
+    put_in(state, [:boards, event.id, :is_closed], true)
   end
 
   defp handle_event(event = %Tournament.ScoreAdded{}, state) do
@@ -155,13 +168,14 @@ defmodule LTP.Leaderboard do
     |> Enum.map(fn {score, index} -> Map.put(score, :rank, index) end)
   end
 
-  defp make_scoreboard(id, name, index \\ 0, sorting \\ @general_order) do
+  defp make_leaderboard(id, name, index \\ 0, sorting \\ @general_order) do
     %{
       id: id,
       display_name: name,
       scores: [],
       sorting: sorting,
-      index: index
+      index: index,
+      is_closed: false
     }
   end
 end
