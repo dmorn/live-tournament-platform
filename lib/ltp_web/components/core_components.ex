@@ -446,6 +446,7 @@ defmodule LTPWeb.CoreComponents do
   attr :rows, :list, required: true
   slot :col, required: true do
     attr :label, :string
+    attr :class, :string
   end
 
   def table(assigns) do
@@ -464,7 +465,7 @@ defmodule LTPWeb.CoreComponents do
           >
             <tr :for={row <- @rows}>
               <td
-                :for={{col, i} <- Enum.with_index(@col)}
+                :for={col <- @col}
                 class={["whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0", col[:class]]}
               >
                     <%= render_slot(col, row) %>

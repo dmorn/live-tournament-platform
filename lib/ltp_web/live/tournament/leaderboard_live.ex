@@ -23,7 +23,6 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  @impl true
   def handle_info({:events, events}, socket) do
     if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
       leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
