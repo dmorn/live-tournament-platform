@@ -4,6 +4,10 @@
 ```elixir
 Phoenix.Token.sign(LTPWeb.Endpoint, "auth", "philip")
 ```
+To login,
+```
+https://ltp.fly.dev/login/<token>
+```
 
 ## Setup production db
 Enter the IEX session
