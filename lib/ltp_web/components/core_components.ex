@@ -543,10 +543,10 @@ defmodule LTPWeb.CoreComponents do
   def card_with_list(assigns) do
     ~H"""
     <li class="overflow-hidden rounded-xl border border-gray-200" {@rest}>
-      <div :if={assigns[:title]} class="border-b border-gray-900/5 bg-gray-50 p-6">
+      <div :if={assigns[:title]} class={["border-gray-900/5 bg-gray-50 p-6", if(@item != [], do: "border-g")]}>
         <div class="font-medium leading-6 text-gray-900"><%= @title %></div>
       </div>
-      <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+      <dl :if={@item != []} class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
         <%= for item <- @item do %>
           <div class={["flex justify-between gap-x-4 py-3 text-gray-700", item[:class]]}>
             <dt><%= item.label %></dt>
