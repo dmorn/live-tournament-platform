@@ -1,13 +1,10 @@
 # LTP
 
-## Generate an Admin token
+## Generate an Login URL for Admins
 ```elixir
-Phoenix.Token.sign(LTPWeb.Endpoint, "auth", "philip")
+LTPWeb.generate_login_url("The Admin Name")
 ```
-To login,
-```
-https://ltp.fly.dev/login/<token>
-```
+To login, click on the link on the desired platform.
 
 ## Setup production db
 Enter the IEX session
@@ -23,6 +20,9 @@ config = LTP.EventStore.config()
 :ok = EventStore.Tasks.Create.exec(config, [])
 :ok = EventStore.Tasks.Init.exec(config, [])
 ```
+
+* Populate the database with the contents of the seed file.
+* To start with a clean state, change the DATABASE_URL secret and do this all over again.
 
 ## Phoenix
 To start your Phoenix server:

@@ -2,7 +2,7 @@ defmodule LTPWeb.SessionController do
   use LTPWeb, :controller
 
   def login(conn, %{"token" => token}) do
-    case Phoenix.Token.verify(LTPWeb.Endpoint, "auth", token, max_age: 86400 * 7) do
+    case LTPWeb.verify_token(token) do
       {:ok, admin_id} ->
         conn
         |> put_flash(:info, "Login successful.")
