@@ -17,7 +17,7 @@ defmodule LTPWeb.Tournament.AddScoreComponent do
     <div>
       <.header><%= gettext("Add score") %></.header>
       <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
-        <.input field={@form[:player_id]} label="Player number" />
+        <.input field={@form[:player_id]} type="number" label={gettext("Player number")} />
         <.input field={@form[:score]} type="number" label={gettext("Score")} />
         <:actions>
           <.button><%= gettext("Save") %></.button>
@@ -33,9 +33,9 @@ defmodule LTPWeb.Tournament.AddScoreComponent do
 
   def handle_event("save", %{"player_id" => player_id, "score" => score} = params, socket) do
     command = %Tournament.AddScore{
-      player_id: player_id,
+      player_id: String.to_integer(player_id),
       game_id: socket.assigns.game_id,
-      score: score,
+      score: String.to_integer(score),
       tournament_id: socket.assigns.tournament_id
     }
 

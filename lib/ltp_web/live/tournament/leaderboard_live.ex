@@ -23,7 +23,6 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  @impl true
   def handle_info({:events, events}, socket) do
     if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
       leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
@@ -51,11 +50,11 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
 
       <%= if Enum.any?(@leaderboard.scores) do %>
         <.table id="scores" rows={@leaderboard.scores}>
-          <:col :let={score} label="#"><%= score.rank %></:col>
-          <:col :let={score} label={gettext("Player")}>
+          <:col :let={score} label="#"><b><%= score.rank %></b></:col>
+          <:col :let={score} label={gettext("Player")} class="w-full">
             <%= score.player.nickname %> (<%= score.player.id %>)
           </:col>
-          <:col :let={score} label={gettext("Score")}><%= score.score %></:col>
+          <:col :let={score} label={gettext("Score")} class="text-right"><%= score.score %></:col>
         </.table>
       <% else %>
         <.error><%= gettext("No score has been registered yet") %></.error>

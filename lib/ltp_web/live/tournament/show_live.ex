@@ -20,7 +20,6 @@ defmodule LTPWeb.Tournament.ShowLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  @impl true
   def handle_info({:events, events}, socket) do
     if Enum.any?(events, &(&1.data.__struct__ == Tournament.ScoreAdded)) do
       leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
@@ -44,13 +43,14 @@ defmodule LTPWeb.Tournament.ShowLive do
       </.header>
 
       <.grid>
-        <%!-- leaderboard.id instead of a-e-f --%>
         <.card_with_list
           :for={leaderboard <- @leaderboards}
           title={leaderboard.display_name}
           phx-click={JS.navigate(~p"/tournament/#{@tournament_id}/leaderboards/#{leaderboard.id}")}
         >
-          <:item label={gettext("Leader")}>Philip</:item>
+          <:item :for={score <- leaderboard.scores} label={"#{score.rank}. #{score.player.nickname} (#{score.player.id})"}>
+            <%= score.score %>
+          </:item>
         </.card_with_list>
       </.grid>
     </div>
