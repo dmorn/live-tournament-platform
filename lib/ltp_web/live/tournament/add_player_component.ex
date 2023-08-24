@@ -32,11 +32,13 @@ defmodule LTPWeb.Tournament.AddPlayerComponent do
   end
 
   def handle_event("save", %{"id" => id, "nickname" => nickname}, socket) do
-    case App.dispatch(%Tournament.CreatePlayer{
-           id: id,
-           nickname: nickname,
-           tournament_id: socket.assigns.tournament_id
-         }) do
+    command = %Tournament.CreatePlayer{
+      id: id,
+      nickname: nickname,
+      tournament_id: socket.assigns.tournament_id
+    }
+
+    case App.dispatch(command) do
       :ok ->
         {:noreply,
          socket

@@ -44,13 +44,14 @@ defmodule LTPWeb.Tournament.ShowLive do
       </.header>
 
       <.grid>
-        <%!-- leaderboard.id instead of a-e-f --%>
         <.card_with_list
           :for={leaderboard <- @leaderboards}
           title={leaderboard.display_name}
           phx-click={JS.navigate(~p"/tournament/#{@tournament_id}/leaderboards/#{leaderboard.id}")}
         >
-          <:item label={gettext("Leader")}>Philip</:item>
+          <:item :for={score <- leaderboard.scores} label={"#{score.rank}. #{score.player.nickname} (#{score.player.id})"}>
+            <%= score.score %>
+          </:item>
         </.card_with_list>
       </.grid>
     </div>

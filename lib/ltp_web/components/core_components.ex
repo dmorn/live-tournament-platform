@@ -421,7 +421,9 @@ defmodule LTPWeb.CoreComponents do
     ~H"""
     <header class="md:flex md:items-center md:justify-between">
       <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"><%= render_slot(@inner_block) %></h2>
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+          <%= render_slot(@inner_block) %>
+        </h2>
       </div>
       <div class="mt-4 flex md:ml-4 md:mt-0">
         <%= render_slot(@actions) %>
@@ -442,66 +444,35 @@ defmodule LTPWeb.CoreComponents do
   """
   attr :id, :string, required: true
   attr :rows, :list, required: true
-  attr :row_id, :any, default: nil, doc: "the function for generating the row id"
-  attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
-
-  attr :row_item, :any,
-    default: &Function.identity/1,
-    doc: "the function for mapping each row before calling the :col and :action slots"
-
   slot :col, required: true do
     attr :label, :string
   end
 
-  slot :action, doc: "the slot for showing user actions in the last table column"
-
   def table(assigns) do
-    assigns =
-      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
-      end
-
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
-          <tr>
-            <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
-          </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
-            <td
-              :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-            >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
-                <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span
-                  :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-                >
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th :for={col <- @col} class={["whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0 text-left font-semibold text-gray-900", col[:class]]}><%= col[:label] %></th>
+            </tr>
+          </thead>
+          <tbody
+            id={@id}
+            class="divide-y divide-gray-200 bg-white"
+          >
+            <tr :for={row <- @rows}>
+              <td
+                :for={{col, i} <- Enum.with_index(@col)}
+                class={["whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0", col[:class]]}
+              >
+                    <%= render_slot(col, row) %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     """
   end
@@ -547,9 +518,11 @@ defmodule LTPWeb.CoreComponents do
   end
 
   attr :title, :string, required: true
+
   slot :item, doc: "Item rows with label and value" do
     attr :label, :string, required: true, doc: "Label"
   end
+
   attr :rest, :global
 
   def card_with_list(assigns) do
@@ -561,7 +534,7 @@ defmodule LTPWeb.CoreComponents do
       <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
         <%= for item <- @item do %>
           <div class="flex justify-between gap-x-4 py-3">
-            <dt class="text-gray-500"><%= item.label %></dt>
+            <dt class="text-gray-700 font-medium"><%= item.label %></dt>
             <dd class="text-gray-700"><%= render_slot(item, :inner_block) %></dd>
           </div>
         <% end %>
