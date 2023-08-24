@@ -110,4 +110,14 @@ defmodule LTPWeb do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+  def verify_token(token) do
+    Phoenix.Token.verify(LTPWeb.Endpoint, "auth", token, max_age: 86400 * 7)
+  end
+
+  def generate_login_url(admin_id) do
+    token = Phoenix.Token.sign(LTPWeb.Endpoint, "auth", admin_id)
+    uri = LTPWeb.Endpoint.url() |> URI.new!()
+    URI.to_string(%{uri | path: Path.join(["/login", token])})
+  end
 end
