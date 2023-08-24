@@ -17,7 +17,10 @@ defmodule LTPWeb.Router do
   scope "/", LTPWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/tournament/:id", Tournament.ShowLive, :show
+    live "/tournament/:id/add_player", Tournament.ShowLive, :add_player
+    live "/tournament/:tournament_id/leaderboards/:game_id", Tournament.LeaderboardLive, :show
+    live "/tournament/:tournament_id/leaderboards/:game_id/add_score", Tournament.LeaderboardLive, :add_score
   end
 
   # Other scopes may use custom stacks.
