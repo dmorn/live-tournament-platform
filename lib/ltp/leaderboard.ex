@@ -55,7 +55,13 @@ defmodule LTP.Leaderboard do
   @impl true
   def handle_call({:get, leaderboard_id}, _from, state) do
     board = get_in(state, [:boards, leaderboard_id])
-    response = %{scores: board.scores, display_name: board.display_name}
+
+    response = %{
+      scores: board.scores,
+      display_name: board.display_name,
+      is_closed: board.is_closed
+    }
+
     {:reply, response, state}
   end
 
