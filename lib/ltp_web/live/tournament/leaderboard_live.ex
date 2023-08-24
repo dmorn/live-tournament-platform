@@ -4,7 +4,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
   alias LTP.Leaderboard
   alias LTP.Tournament
 
-  def mount(%{"tournament_id" => tournament_id, "game_id" => game_id}, _session, socket) do
+  def mount(%{"tournament_id" => tournament_id, "game_id" => game_id}, session, socket) do
     {:ok, pid} = LTP.find_or_create_leaderboard(tournament_id)
     leaderboard = Leaderboard.get(pid, game_id)
 
@@ -18,27 +18,9 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
        page_title: leaderboard.display_name,
        leaderboard: leaderboard,
        tournament_id: tournament_id,
-       game_id: game_id
+       game_id: game_id,
+       is_admin: session["admin_id"] != nil
      )}
-  end
-
-  def handle_params(_params, _uri, socket), do: {:noreply, socket}
-
-  def handle_info({:events, events}, socket) do
-    if Enum.any?(events, &(&1.data.__struct__ in [Tournament.ScoreAdded, Tournament.GameClosed])) do
-      leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
-      {:noreply, assign(socket, leaderboard: leaderboard)}
-    else
-      {:noreply, socket}
-    end
-  end
-
-  def handle_event("close_game", _params, socket) do
-    command = %Tournament.CloseGame{tournament_id: socket.assigns.tournament_id, id: socket.assigns.game_id}
-
-    case App.dispatch(command) do
-      :ok -> {:noreply, socket}
-    end
   end
 
   def render(assigns) do
@@ -48,7 +30,7 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
         <%= @page_title %>
 
         <:actions>
-          <div :if={not @leaderboard.is_closed and @game_id != "general"} class="space-x-1">
+          <div :if={not @leaderboard.is_closed and @game_id != "general" and @is_admin} class="space-x-1">
             <.button
               phx-click={
                 JS.patch(~p"/tournament/#{@tournament_id}/leaderboards/#{@game_id}/add_score")
@@ -98,5 +80,24 @@ defmodule LTPWeb.Tournament.LeaderboardLive do
       />
     </.modal>
     """
+  end
+
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
+  def handle_info({:events, events}, socket) do
+    if Enum.any?(events, &(&1.data.__struct__ in [Tournament.ScoreAdded, Tournament.GameClosed])) do
+      leaderboard = Leaderboard.get(socket.assigns.pid, socket.assigns.game_id)
+      {:noreply, assign(socket, leaderboard: leaderboard)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("close_game", _params, socket) do
+    command = %Tournament.CloseGame{tournament_id: socket.assigns.tournament_id, id: socket.assigns.game_id}
+
+    case App.dispatch(command) do
+      :ok -> {:noreply, socket}
+    end
   end
 end

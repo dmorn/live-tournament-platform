@@ -1,5 +1,10 @@
 # LTP
 
+## Generate an Admin token
+```elixir
+Phoenix.Token.sign(LTPWeb.Endpoint, "auth", "philip")
+```
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies

@@ -2,7 +2,8 @@ defmodule LTPWeb.Tournament.ShowLive do
   use LTPWeb, :live_view
   alias LTP.Leaderboard
 
-  def mount(%{"id" => id}, _session, socket) do
+  def mount(params, session, socket) do
+    id = Map.get(params, "id", "tdc-2023")
     {:ok, pid} = LTP.find_or_create_leaderboard(id)
     summary = Leaderboard.summary(pid)
 
@@ -14,7 +15,8 @@ defmodule LTPWeb.Tournament.ShowLive do
      assign(socket,
        page_title: summary.display_name,
        leaderboards: summary.leaderboards,
-       tournament_id: id
+       tournament_id: id,
+       is_admin: session["admin_id"] != nil
      )}
   end
 
@@ -36,7 +38,7 @@ defmodule LTPWeb.Tournament.ShowLive do
         <%= @page_title %>
 
         <:actions>
-          <.button phx-click={JS.patch(~p"/tournament/#{@tournament_id}/add_player")}>
+          <.button :if={@is_admin} phx-click={JS.patch(~p"/tournament/#{@tournament_id}/add_player")}>
             <%= gettext("Add player") %>
           </.button>
         </:actions>

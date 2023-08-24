@@ -17,10 +17,15 @@ defmodule LTPWeb.Router do
   scope "/", LTPWeb do
     pipe_through :browser
 
-    live "/tournament/:id", Tournament.ShowLive, :show
-    live "/tournament/:id/add_player", Tournament.ShowLive, :add_player
-    live "/tournament/:tournament_id/leaderboards/:game_id", Tournament.LeaderboardLive, :show
-    live "/tournament/:tournament_id/leaderboards/:game_id/add_score", Tournament.LeaderboardLive, :add_score
+    get "/login/:token", SessionController, :login
+
+    live_session :default do
+      live "/", Tournament.ShowLive, :show
+      live "/tournament/:id", Tournament.ShowLive, :show
+      live "/tournament/:id/add_player", Tournament.ShowLive, :add_player
+      live "/tournament/:tournament_id/leaderboards/:game_id", Tournament.LeaderboardLive, :show
+      live "/tournament/:tournament_id/leaderboards/:game_id/add_score", Tournament.LeaderboardLive, :add_score
+    end
   end
 
   # Other scopes may use custom stacks.
