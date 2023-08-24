@@ -19,7 +19,7 @@ tournament_id = "tdc-2023"
   id: "a-f",
   display_name: "Acqua e Fuoco",
   tournament_id: tournament_id,
-  sorting: :desc
+  sorting: :asc
 })
 
 :ok = App.dispatch(%Tournament.CreateGame{
