@@ -14,6 +14,7 @@ defmodule LTP.Tournament.GameCreated do
 end
 
 defmodule LTP.Tournament.GameClosed do
+  @derive Jason.Encoder
   defstruct [:id, :tournament_id]
 end
 

@@ -86,5 +86,13 @@ defmodule LTP.TournamentTest do
              %{rank: 1, player: %{id: ^id, nickname: ^nick}},
              %{rank: 2, player: %{id: ^other_id, nickname: ^other_nick}}
            ] = Leaderboard.get(pid, "general").scores
+
+    :ok =
+      App.dispatch(%Tournament.CloseGame{
+        id: ctx.game_id,
+        tournament_id: ctx.tournament_id
+      })
+
+    assert Leaderboard.get(pid, ctx.game_id).is_closed
   end
 end
