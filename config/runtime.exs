@@ -21,6 +21,12 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  config :ltp, LTP.EventStore,
+    serializer: Commanded.Serialization.JsonSerializer,
+    socket_options: [:inet6],
+    url: System.get_env("DATABASE_URL"),
+    pool_size: 10
+
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want
