@@ -1,4 +1,10 @@
 # LTP
+The Live Tournament Platform is ment to be used for tracking the scores of a variety
+of events, be it a dart competition or a bike race. At the moment though it is tuned
+to a specific tournament that this platform is going to host as first competition.
+
+## Features
+* Leaderboards live updates
 
 ## Generate an Login URL for Admins
 ```elixir
