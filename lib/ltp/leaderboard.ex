@@ -46,7 +46,7 @@ defmodule LTP.Leaderboard do
     Commanded.EventStore.subscribe(LTP.App, opts[:tournament_id])
 
     boards = %{
-      @general_id => make_leaderboard(@general_id, "General Leaderboard")
+      @general_id => make_leaderboard(@general_id, "Classifica Generale")
     }
 
     {:ok, %{boards: boards, display_name: nil, players: %{}}}
